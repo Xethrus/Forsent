@@ -1,41 +1,53 @@
 use std::io;
+use anyhow::Result;
+use anyhow::Context;
 
-enum dataSource {
-    local,
-    api,
+enum DataSource {
+    Local,
+    Api,
 }
 
 struct Config {
-    source: dataSource,
+    source: DataSource,
 }
 
-fn obtainIntention() -> Result<()> {
-    loop{
-        println!("select a input data form:");
+fn obtain_intention(config: &mut Config) -> Result<()> {
+    loop {
+        println!("Select an input data form:");
         println!("1. local");
         println!("2. api");
         println!("3. exit");
 
         let mut input = String::new();
-        io::stdin().read_line(&mut input)?;
+        io::stdin().read_line(&mut input)
+            .context("Failed to read from stdin")?;
 
         match input.trim() {
-            "1" => handleDataSource(dataSource::local),
-            "2" => handleDataSource(dataSource::api),
+            "1" => handle_data_source(DataSource::Local, config),
+            "2" => handle_data_source(DataSource::Api, config),
             "3" => break,
-            _ => println!("invalid option selected, try again."),
+            _ => println!("Invalid option selected, try again."),
         }
     }
+    Ok(())
 }
 
-fn handleDataSource(dataSource: source, Config: configuration) -> result<Config> {
+fn handle_data_source(source: DataSource, config: &mut Config) {
     match source {
-        dataSource::local => configuration::source = dataSource::local;//do something;
-        dataSource::api => configuration::source = dataSource::api;//do something else
+        DataSource::Local => config.source = DataSource::Local,
+        DataSource::Api => config.source = DataSource::Api,
     }
 }
 
 fn main() {
-    println!("Hello, world!");
+    let mut config = Config {
+        source: DataSource::Local, // default to Local
+    };
+
+    if let Err(e) = obtain_intention(&mut config) {
+        eprintln!("An error occurred: {}", e);
+    }
+
+    println!("Data source selected: {:?}", config.source);
 }
 
