@@ -1,19 +1,18 @@
 use std::io;
-use anyhow::Result;
-use anyhow::Context;
-
+use anyhow::{Result, Context};
 use reqwest;
 use serde::{Deserialize, Serialize};
-use anyhow::Result;
 use std::collections::HashMap;
 
 const API_URL: &str = "https://www.alphavantage.co/query";
 
+#[derive(Debug)]
 enum DataSource {
     Local,
     Api,
 }
 
+#[derive(Debug)]
 struct Config {
     source: DataSource,
 }
@@ -39,7 +38,7 @@ struct DailyData {
 }
 
 #[tokio::main]
-fn make_api_call(&str: api_key) -> Result<()> {
+async fn make_api_call(api_key: &str) -> Result<()> {
     let response = reqwest::get(&format!("{}?function=TIME_SERIES_DAILY&symbol=MSFT&apikey={}", API_URL, api_key))
         .await?
         .json::<ApiResponse>()
@@ -95,4 +94,3 @@ fn main() {
 
     println!("Data source selected: {:?}", config.source);
 }
-
