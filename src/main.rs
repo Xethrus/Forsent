@@ -67,8 +67,14 @@ fn obtain_intention(config: &mut Config) -> Result<()> {
             .context("Failed to read from stdin")?;
 
         match input.trim() {
-            "1" => handle_data_source(DataSource::Local, config),
-            "2" => handle_data_source(DataSource::Api, config),
+            "1" => {
+                handle_data_source(DataSource::Local, config);
+                return Ok(());
+            }
+            "2" => {
+                handle_data_source(DataSource::Api, config); 
+                return Ok(());
+            }
             "3" => break,
             _ => println!("Invalid option selected, try again."),
         }
